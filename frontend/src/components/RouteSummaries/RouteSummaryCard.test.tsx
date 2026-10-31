@@ -22,12 +22,31 @@ const route: RouteOption = {
 
 describe('RouteSummaryCard', () => {
   it('shows the ranking criteria and recommendation', () => {
-    render(<RouteSummaryCard route={route} recommended selected onSelect={() => {}} />);
+    render(
+      <RouteSummaryCard
+        route={route}
+        intervalMiles={25}
+        recommended
+        selected
+        onSelect={() => {}}
+      />,
+    );
     expect(screen.getByText('Route B')).toBeInTheDocument();
     expect(screen.getByText('Recommended')).toBeInTheDocument();
     expect(screen.getByText('798.5 mi')).toBeInTheDocument();
     expect(screen.getByText('12 h 27 min')).toBeInTheDocument();
     expect(screen.getByText('12.5 mi')).toBeInTheDocument();
+    expect(screen.getByText('Severe miles')).toBeInTheDocument();
+    // Each information icon defines the level by its thresholds and states the unit.
+    const severe = screen.getByRole('img', { name: /^A checkpoint is Severe when/ });
+    expect(severe).toHaveAccessibleName(/wind of 35 to 44 mph with a load over 40,000 lb/);
+    expect(severe).toHaveAccessibleName(/route miles forecast at Severe/);
+    expect(
+      screen.getByRole('img', { name: /^No Travel is the highest risk level/ }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: /^A checkpoint is High when/ })).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: /scores 0 for Low/ })).toBeInTheDocument();
+    expect(screen.getByText('0, every 25 mi')).toBeInTheDocument();
     expect(screen.getByText('0.27 of 4')).toBeInTheDocument();
     expect(
       screen.getByRole('img', { name: /Miles by risk level\. Low 700 mi, Moderate 56 mi/ }),
@@ -39,7 +58,13 @@ describe('RouteSummaryCard', () => {
   it('selects the route on click', async () => {
     const onSelect = vi.fn();
     render(
-      <RouteSummaryCard route={route} recommended={false} selected={false} onSelect={onSelect} />,
+      <RouteSummaryCard
+        route={route}
+        intervalMiles={25}
+        recommended={false}
+        selected={false}
+        onSelect={onSelect}
+      />,
     );
     await userEvent.click(screen.getByRole('button', { pressed: false }));
     expect(onSelect).toHaveBeenCalledWith('route-2');

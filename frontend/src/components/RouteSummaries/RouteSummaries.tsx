@@ -1,7 +1,6 @@
-import { Alert, AlertTitle, Stack, Typography } from '@mui/material';
+import { Alert, AlertTitle, Stack } from '@mui/material';
 
 import type { TripPlan } from '../../api/types';
-import { formatDateTime, formatPounds } from '../../utils/format';
 import { RouteSummaryCard } from './RouteSummaryCard';
 
 interface Props {
@@ -25,16 +24,11 @@ export function RouteSummaries({ plan, selectedRouteId, onSelectRoute }: Props) 
           {warning}
         </Alert>
       ))}
-      <Typography variant="body2" color="text.secondary">
-        Weather is sampled every {plan.checkpoint_interval_miles} mi at each checkpoint&apos;s
-        arrival time. The trip departs {formatDateTime(plan.departure_time)} with a{' '}
-        {formatPounds(plan.load_weight_lbs)} load. Routes are ranked by fewest No Travel, Severe and
-        High miles, then average risk, then travel time.
-      </Typography>
       {plan.routes.map((route) => (
         <RouteSummaryCard
           key={route.id}
           route={route}
+          intervalMiles={plan.checkpoint_interval_miles}
           recommended={route.id === plan.recommended_route_id}
           selected={route.id === selectedRouteId}
           onSelect={onSelectRoute}

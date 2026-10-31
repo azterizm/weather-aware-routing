@@ -63,11 +63,6 @@ export default function App() {
               serverErrors={serverErrors}
             />
             {plan.isError && <Alert severity="error">{errorMessage(plan.error)}</Alert>}
-            {plan.isFetching && (
-              <Typography variant="body2" color="text.secondary" role="status">
-                Finding routes and sampling the weather along each one…
-              </Typography>
-            )}
             {plan.data && selectedRouteId && !plan.isFetching && (
               <RouteSummaries
                 plan={plan.data}

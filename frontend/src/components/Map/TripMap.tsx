@@ -19,6 +19,7 @@ import { HeatmapLayer } from './HeatmapLayer';
 import { CHECKPOINT_PANE, CHECKPOINT_PANE_Z, HEATMAP_PANE, HEATMAP_PANE_Z } from './panes';
 import { RiskLegend } from './RiskLegend';
 import { RouteLayer } from './RouteLayer';
+import { tripWindow } from './tripWindow';
 import { handleTileError, MAX_TILE_ZOOM, PRIMARY_TILE_URL, TILE_ATTRIBUTION } from './tiles';
 
 const US_CENTER: [number, number] = [39.5, -98.35];
@@ -52,6 +53,13 @@ export default function TripMap({
     [plan],
   );
   const lines = useMemo(() => [...positions.values()], [positions]);
+
+  const selectedRoute = plan?.routes.find((route) => route.id === selectedRouteId);
+  const hours = corridor.data?.hours;
+  const trip = useMemo(() => {
+    if (!hours || !selectedRoute) return null;
+    return tripWindow(hours, selectedRoute.departure_time, selectedRoute.arrival_time);
+  }, [hours, selectedRoute]);
 
   return (
     <Box
@@ -145,6 +153,7 @@ export default function TripMap({
             onChange={(next) => setSlider({ plan, hour: next })}
             loading={corridor.loading}
             error={corridor.error}
+            trip={trip}
           />
           <RiskLegend loadLbs={plan.load_weight_lbs} />
         </Paper>

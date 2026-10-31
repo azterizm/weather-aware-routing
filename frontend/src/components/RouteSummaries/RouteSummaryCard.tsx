@@ -1,23 +1,49 @@
-import { Box, Card, CardActionArea, CardContent, Chip, Stack, Typography } from '@mui/material';
+import InfoOutlined from '@mui/icons-material/InfoOutlined';
+import {
+  Box,
+  Card,
+  CardActionArea,
+  CardContent,
+  Chip,
+  Stack,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 import { memo } from 'react';
 
 import type { RouteOption } from '../../api/types';
 import { formatDateTime, formatDuration, formatMiles } from '../../utils/format';
 import { RISK_META, riskLabel } from '../../utils/risk';
 import { RiskMilesBar } from './RiskMilesBar';
+import { RISK_INFO } from './riskInfo';
 
 interface Props {
   route: RouteOption;
+  /** Checkpoint spacing in miles, the same for every route in the plan. */
+  intervalMiles: number;
   recommended: boolean;
   selected: boolean;
   onSelect: (routeId: string) => void;
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({ label, value, info }: { label: string; value: string; info?: string }) {
   return (
     <Box>
-      <Typography variant="caption" color="text.secondary" component="div">
+      <Typography
+        variant="caption"
+        color="text.secondary"
+        component="div"
+        sx={{ display: 'flex', alignItems: 'center', gap: 0.25 }}
+      >
         {label}
+        {info && (
+          // A labelled icon, not a button: the whole card is already a button.
+          <Tooltip title={info} enterTouchDelay={0}>
+            <Box component="span" role="img" sx={{ display: 'inline-flex', cursor: 'help' }}>
+              <InfoOutlined sx={{ fontSize: 14 }} />
+            </Box>
+          </Tooltip>
+        )}
       </Typography>
       <Typography variant="body2" sx={{ fontWeight: 500 }}>
         {value}
@@ -28,6 +54,7 @@ function Stat({ label, value }: { label: string; value: string }) {
 
 export const RouteSummaryCard = memo(function RouteSummaryCard({
   route,
+  intervalMiles,
   recommended,
   selected,
   onSelect,
@@ -48,7 +75,6 @@ export const RouteSummaryCard = memo(function RouteSummaryCard({
               {route.label}
             </Typography>
             {recommended && <Chip label="Recommended" color="primary" size="small" />}
-            {selected && !recommended && <Chip label="Selected" variant="outlined" size="small" />}
           </Stack>
           <Box
             sx={{
@@ -61,11 +87,16 @@ export const RouteSummaryCard = memo(function RouteSummaryCard({
             <Stat label="Distance" value={formatMiles(route.distance_miles)} />
             <Stat label="Travel time" value={formatDuration(route.duration_seconds)} />
             <Stat label="Arrival" value={formatDateTime(route.arrival_time)} />
-            <Stat label="No Travel" value={formatMiles(miles.NO_TRAVEL)} />
-            <Stat label="Severe" value={formatMiles(miles.SEVERE)} />
-            <Stat label="High" value={formatMiles(miles.HIGH)} />
+            <Stat
+              label="No Travel miles"
+              value={formatMiles(miles.NO_TRAVEL)}
+              info={RISK_INFO.NO_TRAVEL}
+            />
+            <Stat label="Severe miles" value={formatMiles(miles.SEVERE)} info={RISK_INFO.SEVERE} />
+            <Stat label="High miles" value={formatMiles(miles.HIGH)} info={RISK_INFO.HIGH} />
             <Stat
               label="Average risk"
+              info={RISK_INFO.AVERAGE}
               value={
                 summary.average_risk === null
                   ? 'Unknown'
@@ -92,7 +123,10 @@ export const RouteSummaryCard = memo(function RouteSummaryCard({
                 </Typography>
               </Stack>
             </Box>
-            <Stat label="Checkpoints" value={String(route.checkpoints.length)} />
+            <Stat
+              label="Checkpoints"
+              value={`${route.checkpoints.length}, every ${intervalMiles} mi`}
+            />
           </Box>
           <RiskMilesBar milesByRisk={miles} />
         </CardContent>
