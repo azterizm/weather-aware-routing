@@ -2,6 +2,8 @@
 
 Weather-Aware Truck Routing recommends the safest of 3 truck routes for a trip, based on weather, load weight and travel time. A React single-page app sends the trip to a Django REST API. The API plans the routes with TomTom, reads the Open-Meteo forecast at each checkpoint for the hour the truck reaches it, scores the risk and returns a ranked result.
 
+The hosted app runs at https://weather-aware-routing-e8f465157fa2.herokuapp.com on Heroku in the United States.
+
 The driver enters an origin, a destination, a departure date and time, and a load weight. The app then completes six steps.
 
 1. TomTom returns 3 truck route options.
@@ -253,7 +255,7 @@ Every setting comes from an environment variable. Local development reads them f
 
 ## Deployment
 
-The app ships as one Docker image built from `Dockerfile`. On Heroku, `heroku.yml` selects the container build.
+The app ships as one Docker image built from `Dockerfile`. On Heroku, `heroku.yml` selects the container build. The hosted app is the Heroku app `weather-aware-routing` in the US region, running on 1 Basic dyno.
 
 ```bash
 heroku create <app-name>
