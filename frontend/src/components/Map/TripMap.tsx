@@ -18,6 +18,7 @@ import { ForecastSlider } from './ForecastSlider';
 import { HeatmapLayer } from './HeatmapLayer';
 import { CHECKPOINT_PANE, CHECKPOINT_PANE_Z, HEATMAP_PANE, HEATMAP_PANE_Z } from './panes';
 import { RiskLegend } from './RiskLegend';
+import { routeOffset } from './offset';
 import { RouteLayer } from './RouteLayer';
 import { tripWindow } from './tripWindow';
 import { handleTileError, MAX_TILE_ZOOM, PRIMARY_TILE_URL, TILE_ATTRIBUTION } from './tiles';
@@ -106,10 +107,12 @@ export default function TripMap({
         <Pane name={CHECKPOINT_PANE} style={{ zIndex: CHECKPOINT_PANE_Z }}>
           {plan &&
             selectedRouteId &&
-            plan.routes.map((route) => (
+            plan.routes.map((route, index) => (
               <RouteCheckpoints
                 key={route.id}
                 route={route}
+                line={positions.get(route.id) ?? []}
+                offset={routeOffset(index, plan.routes.length)}
                 selected={route.id === selectedRouteId}
                 onSelect={onSelectRoute}
               />
@@ -122,7 +125,7 @@ export default function TripMap({
                 radius={8}
                 pathOptions={{ color: '#111827', weight: 3, fillColor: '#ffffff', fillOpacity: 1 }}
               >
-                <Tooltip>
+                <Tooltip pane="tooltipPane">
                   {kind === 'origin' ? 'Origin' : 'Destination'} is {endpoints[kind].label}
                 </Tooltip>
               </CircleMarker>

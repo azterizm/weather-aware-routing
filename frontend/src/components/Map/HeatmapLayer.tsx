@@ -23,8 +23,8 @@ const HeatCell = memo(function HeatCell({ bounds, risk, wind, rain, snow }: Cell
       bounds={bounds}
       pathOptions={{ stroke: false, fillColor: RISK_META[level].color, fillOpacity }}
     >
-      <Tooltip sticky>
-        <strong>{RISK_META[level].label} risk</strong>
+      <Tooltip sticky pane="tooltipPane">
+        <strong>Risk level is {RISK_META[level].label}</strong>
         {wind !== null && rain !== null && snow !== null && (
           <>
             <br />

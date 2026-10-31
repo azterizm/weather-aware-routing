@@ -1,9 +1,9 @@
 """Route summaries and recommendation ranking. Pure functions, no I/O.
 
 Routes are ranked lexicographically by:
-  1. fewest No Travel miles (strictly worse than Severe, so it is compared first)
-  2. fewest Severe miles
-  3. fewest High miles
+  1. fewest miles at No Travel (strictly worse than Severe, so it is compared first)
+  2. fewest miles at Severe
+  3. fewest miles at High
   4. lowest average risk (mile-weighted)
   5. shortest travel time
 Miles are rounded to 0.1 and average risk to 0.01 so float noise cannot decide a ranking.
@@ -77,9 +77,9 @@ def format_duration(seconds: float) -> str:
 
 
 CRITERIA = (
-    "the fewest No Travel miles",
-    "the fewest Severe miles",
-    "the fewest High miles",
+    "the fewest miles at No Travel",
+    "the fewest miles at Severe",
+    "the fewest miles at High",
     "the lowest average risk",
     "the shortest travel time",
 )
@@ -87,7 +87,7 @@ CRITERIA = (
 
 def recommendation_reason(ranked: Sequence[RouteScore]) -> str:
     """One sentence naming the first criterion on which the winner beats the runner-up,
-    e.g. "Route B has the fewest Severe miles, 0 mi against 42 mi on Route A."."""
+    e.g. "Route B has the fewest miles at Severe, 0 mi against 42 mi on Route A."."""
     if not ranked:
         return ""
     if len(ranked) == 1:

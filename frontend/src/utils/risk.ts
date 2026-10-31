@@ -34,16 +34,16 @@ function joinWithAnd(items: string[]): string {
   return items.length > 1 ? `${items.slice(0, -1).join(', ')} and ${items.at(-1)}` : items.join('');
 }
 
-/** One sentence on why a checkpoint has its level, such as "Severe risk, set by rain." */
+/** One sentence on why a checkpoint has its level, such as "Risk level is Severe, set by rain." */
 export function describeRiskCause(checkpoint: Checkpoint): string {
   const { factors, risk } = checkpoint;
   if (!factors || risk === 'UNKNOWN') return 'The forecast is unavailable for this hour.';
-  if (risk === 'LOW') return 'Low risk. Every condition is below its threshold.';
+  if (risk === 'LOW') return 'Risk level is Low. Every condition is below its threshold.';
   const causes: string[] = [];
   if (factors.wind === risk) {
     causes.push((factors.load_rule && LOAD_RULE_TEXT[factors.load_rule]) || 'wind');
   }
   if (factors.rain === risk) causes.push('rain');
   if (factors.snow === risk) causes.push('snow');
-  return `${RISK_META[risk].label} risk, set by ${joinWithAnd(causes)}.`;
+  return `Risk level is ${RISK_META[risk].label}, set by ${joinWithAnd(causes)}.`;
 }

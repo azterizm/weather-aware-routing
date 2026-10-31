@@ -88,12 +88,16 @@ export const RouteSummaryCard = memo(function RouteSummaryCard({
             <Stat label="Travel time" value={formatDuration(route.duration_seconds)} />
             <Stat label="Arrival" value={formatDateTime(route.arrival_time)} />
             <Stat
-              label="No Travel miles"
+              label="Miles at No Travel"
               value={formatMiles(miles.NO_TRAVEL)}
               info={RISK_INFO.NO_TRAVEL}
             />
-            <Stat label="Severe miles" value={formatMiles(miles.SEVERE)} info={RISK_INFO.SEVERE} />
-            <Stat label="High miles" value={formatMiles(miles.HIGH)} info={RISK_INFO.HIGH} />
+            <Stat
+              label="Miles at Severe"
+              value={formatMiles(miles.SEVERE)}
+              info={RISK_INFO.SEVERE}
+            />
+            <Stat label="Miles at High" value={formatMiles(miles.HIGH)} info={RISK_INFO.HIGH} />
             <Stat
               label="Average risk"
               info={RISK_INFO.AVERAGE}

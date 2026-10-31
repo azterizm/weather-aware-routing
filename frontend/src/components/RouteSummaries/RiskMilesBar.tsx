@@ -29,7 +29,7 @@ export function RiskMilesBar({ milesByRisk }: Props) {
           return (
             <Tooltip
               key={key}
-              title={`${formatMiles(miles)} at ${RISK_META[key].label} risk, ${share.toFixed(0)}% of the route`}
+              title={`${formatMiles(miles)} at ${RISK_META[key].label}, ${share.toFixed(0)}% of the route`}
             >
               <Box
                 sx={{ flexGrow: miles, flexBasis: 0, minWidth: 4, bgcolor: RISK_META[key].color }}

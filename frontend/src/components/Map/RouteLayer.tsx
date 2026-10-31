@@ -1,10 +1,11 @@
 import L, { type LatLngTuple } from 'leaflet';
 import { memo, useMemo } from 'react';
-import { Polyline, Tooltip } from 'react-leaflet';
+import { Tooltip } from 'react-leaflet';
 
 import type { RouteOption } from '../../api/types';
 import { ROUTE_COLORS } from '../../theme';
 import { formatDateTime, formatDuration, formatMiles } from '../../utils/format';
+import { OffsetPolyline, routeOffset } from './offset';
 
 interface Props {
   routes: RouteOption[];
@@ -27,8 +28,8 @@ function RouteTooltip({ route, recommended }: { route: RouteOption; recommended:
       {formatMiles(route.distance_miles)}, {formatDuration(route.duration_seconds)}, arrives{' '}
       {formatDateTime(route.arrival_time)}
       <br />
-      No Travel {formatMiles(miles.NO_TRAVEL)}, Severe {formatMiles(miles.SEVERE)}, High{' '}
-      {formatMiles(miles.HIGH)}
+      {formatMiles(miles.NO_TRAVEL)} at No Travel, {formatMiles(miles.SEVERE)} at Severe,{' '}
+      {formatMiles(miles.HIGH)} at High
       <br />
       Average risk {average === null ? 'unknown' : `${average.toFixed(2)} of 4`}
     </div>
@@ -45,17 +46,20 @@ export const RouteLayer = memo(function RouteLayer({
   // A wider hit tolerance makes thin route lines easy to click.
   const renderer = useMemo(() => L.canvas({ tolerance: 6 }), []);
   // Draw the selected route last so it sits on top.
-  const ordered = [...routes].sort(
-    (a, b) => Number(a.id === selectedRouteId) - Number(b.id === selectedRouteId),
-  );
+  const ordered = routes
+    .map((route, index) => ({ route, offset: routeOffset(index, routes.length) }))
+    .sort(
+      (a, b) => Number(a.route.id === selectedRouteId) - Number(b.route.id === selectedRouteId),
+    );
   return (
     <>
-      {ordered.map((route) => {
+      {ordered.map(({ route, offset }) => {
         const selected = route.id === selectedRouteId;
         return (
-          <Polyline
+          <OffsetPolyline
             key={route.id}
             positions={positions.get(route.id) ?? []}
+            offset={offset}
             pathOptions={{
               renderer,
               color: selected ? ROUTE_COLORS.selected : ROUTE_COLORS.other,
@@ -67,7 +71,7 @@ export const RouteLayer = memo(function RouteLayer({
             <Tooltip sticky>
               <RouteTooltip route={route} recommended={route.id === recommendedRouteId} />
             </Tooltip>
-          </Polyline>
+          </OffsetPolyline>
         );
       })}
     </>

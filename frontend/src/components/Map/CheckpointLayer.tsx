@@ -1,9 +1,11 @@
-import { memo } from 'react';
-import { CircleMarker, Tooltip } from 'react-leaflet';
+import type { LatLngTuple } from 'leaflet';
+import { memo, useMemo } from 'react';
+import { Tooltip } from 'react-leaflet';
 
 import type { Checkpoint, RouteOption } from '../../api/types';
 import { formatDateTime, formatRate, formatWind } from '../../utils/format';
 import { RISK_META, describeRiskCause } from '../../utils/risk';
+import { neighbourVertices, OffsetCircleMarker } from './offset';
 
 function CheckpointTooltip({ route, checkpoint }: { route: RouteOption; checkpoint: Checkpoint }) {
   const { weather } = checkpoint;
@@ -27,6 +29,9 @@ function CheckpointTooltip({ route, checkpoint }: { route: RouteOption; checkpoi
 
 interface RouteCheckpointsProps {
   route: RouteOption;
+  /** The route's decoded line and sideways pixel offset, shared with its polyline. */
+  line: LatLngTuple[];
+  offset: number;
   selected: boolean;
   onSelect: (routeId: string) => void;
 }
@@ -34,15 +39,23 @@ interface RouteCheckpointsProps {
 /** Checkpoints of one route, coloured by risk. Selected-route markers are larger. */
 export const RouteCheckpoints = memo(function RouteCheckpoints({
   route,
+  line,
+  offset,
   selected,
   onSelect,
 }: RouteCheckpointsProps) {
+  const directions = useMemo(
+    () => route.checkpoints.map((cp) => neighbourVertices(line, [cp.lat, cp.lon])),
+    [route, line],
+  );
   return (
     <>
       {route.checkpoints.map((checkpoint) => (
-        <CircleMarker
+        <OffsetCircleMarker
           key={checkpoint.index}
           center={[checkpoint.lat, checkpoint.lon]}
+          offset={offset}
+          direction={directions[checkpoint.index] ?? null}
           radius={selected ? 6 : 4}
           pathOptions={{
             color: '#ffffff',
@@ -52,10 +65,11 @@ export const RouteCheckpoints = memo(function RouteCheckpoints({
           }}
           eventHandlers={{ click: () => onSelect(route.id) }}
         >
-          <Tooltip>
+          {/* react-leaflet would otherwise put the tooltip in the checkpoint pane, under the dots. */}
+          <Tooltip pane="tooltipPane">
             <CheckpointTooltip route={route} checkpoint={checkpoint} />
           </Tooltip>
-        </CircleMarker>
+        </OffsetCircleMarker>
       ))}
     </>
   );

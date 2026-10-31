@@ -118,9 +118,9 @@ def test_plan_happy_path(client):
     assert len(polyline.decode(first["geometry"])) >= 2
 
     # Severe everywhere, so the shortest route by distance (Route B, ~798 mi) has the fewest
-    # Severe miles and wins on the first criterion.
+    # miles at Severe and wins on the first criterion.
     assert body["recommended_route_id"] == "route-2"
-    assert body["recommendation_reason"].startswith("Route B has the fewest Severe miles")
+    assert body["recommendation_reason"].startswith("Route B has the fewest miles at Severe")
 
 
 @responses.activate

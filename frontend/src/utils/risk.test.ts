@@ -21,7 +21,7 @@ describe('risk utils', () => {
 
   it('explains a load-adjusted wind level', () => {
     expect(describeRiskCause(base)).toBe(
-      'Severe risk, set by wind of 35 to 44 mph with a load over 40,000 lb.',
+      'Risk level is Severe, set by wind of 35 to 44 mph with a load over 40,000 lb.',
     );
   });
 
@@ -31,12 +31,12 @@ describe('risk utils', () => {
       risk: 'HIGH',
       factors: { wind: 'HIGH', rain: 'HIGH', snow: 'LOW', load_rule: null },
     };
-    expect(describeRiskCause(checkpoint)).toBe('High risk, set by wind and rain.');
+    expect(describeRiskCause(checkpoint)).toBe('Risk level is High, set by wind and rain.');
   });
 
   it('handles low and unknown checkpoints', () => {
     expect(describeRiskCause({ ...base, risk: 'LOW' })).toBe(
-      'Low risk. Every condition is below its threshold.',
+      'Risk level is Low. Every condition is below its threshold.',
     );
     expect(describeRiskCause({ ...base, risk: 'UNKNOWN', factors: null })).toBe(
       'The forecast is unavailable for this hour.',

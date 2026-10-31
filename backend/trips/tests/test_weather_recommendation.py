@@ -96,17 +96,17 @@ def score(route_id, no_travel=0.0, severe=0.0, high=0.0, avg=0.5, time_s=3600.0)
         (
             score("A", no_travel=0, severe=50),
             score("B", no_travel=5),
-            "Route A has the fewest No Travel miles, 0 mi against 5 mi on Route B.",
+            "Route A has the fewest miles at No Travel, 0 mi against 5 mi on Route B.",
         ),
         (
             score("A", severe=10, high=90),
             score("B", severe=20, high=0),
-            "Route A has the fewest Severe miles, 10 mi against 20 mi on Route B.",
+            "Route A has the fewest miles at Severe, 10 mi against 20 mi on Route B.",
         ),
         (
             score("A", high=10, avg=2.0),
             score("B", high=30, avg=0.1),
-            "Route A has the fewest High miles, 10 mi against 30 mi on Route B.",
+            "Route A has the fewest miles at High, 10 mi against 30 mi on Route B.",
         ),
         (
             score("A", avg=0.4, time_s=9000),

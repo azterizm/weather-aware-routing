@@ -10,7 +10,7 @@ The driver enters an origin, a destination, a departure date and time, and a loa
 2. Checkpoints are placed every 10, 25 or 50 miles along each route, and each checkpoint gets the truck's estimated arrival time.
 3. The hourly forecast is read at each checkpoint for that arrival time.
 4. Each checkpoint is classified with the risk and load rules below.
-5. The routes are ranked by fewest Severe miles, then fewest High miles, then lowest average risk, then shortest travel time.
+5. The routes are ranked by fewest miles at Severe, then fewest miles at High, then lowest average risk, then shortest travel time.
 6. The map shows the routes, checkpoints, risk levels, arrival times and route summaries, with a weather risk heatmap along the trip corridor and a slider that covers 0 to 48 hours after departure.
 
 ## Contents
@@ -86,20 +86,20 @@ A checkpoint's risk is the worst of the load-adjusted wind level, the rain level
 - The checkpoint spacing depends on trip length and is the same for all 3 routes, so their miles compare fairly. The shortest route sets it. A trip under 250 miles uses 10 miles, a trip from 250 to 1,000 miles uses 25 miles, and a longer trip uses 50 miles.
 - Checkpoints sit at mile 0, at every multiple of the spacing and at the destination. A regular checkpoint within 10 percent of one spacing of the destination merges into the destination checkpoint.
 - The arrival time at a checkpoint is the departure time plus TomTom's travel time to that point on the route. TomTom returns travel times with traffic for points along the route, and the app interpolates by distance between them.
-- Each checkpoint covers half the distance to each neighbouring checkpoint, so the covered miles add up to the route length. Severe miles, High miles and the other totals are sums of covered miles.
+- Each checkpoint covers half the distance to each neighbouring checkpoint, so the covered miles add up to the route length. Miles at Severe, miles at High and the other totals are sums of covered miles.
 - Average risk weights each checkpoint's score by its covered miles. Low scores 0, Moderate 1, High 2, Severe 3 and No Travel 4.
 
 ### Recommendation
 
 Routes are compared on five criteria in this order.
 
-1. Fewest No Travel miles.
-2. Fewest Severe miles.
-3. Fewest High miles.
+1. Fewest miles at No Travel.
+2. Fewest miles at Severe.
+3. Fewest miles at High.
 4. Lowest average risk.
 5. Shortest travel time.
 
-The brief lists Severe first and does not rank No Travel. No Travel is worse than Severe, so it is compared first, and a route with any No Travel miles ranks below an otherwise equal route without them. Miles are compared to the nearest 0.1 mile and average risk to the nearest 0.01, so rounding noise cannot decide a ranking. The recommendation panel names the first criterion on which the winner beat the runner-up and shows both values.
+The brief lists Severe first and does not rank No Travel. No Travel is worse than Severe, so it is compared first, and a route with any miles at No Travel ranks below an otherwise equal route without them. Miles are compared to the nearest 0.1 mile and average risk to the nearest 0.01, so rounding noise cannot decide a ranking. The recommendation panel names the first criterion on which the winner beat the runner-up and shows both values.
 
 ### Three route options
 
@@ -161,7 +161,7 @@ The response has this shape, shortened to one route and one checkpoint.
   "load_weight_lbs": 42000.0,
   "checkpoint_interval_miles": 25,
   "recommended_route_id": "route-2",
-  "recommendation_reason": "Route B has the fewest Severe miles, 0 mi against 50 mi on Route A.",
+  "recommendation_reason": "Route B has the fewest miles at Severe, 0 mi against 50 mi on Route A.",
   "warnings": [],
   "routes": [
     {
@@ -289,7 +289,7 @@ GitHub Actions runs lint, type checks and tests for both halves on every push, t
 - Times are entered and shown in the browser's time zone, which the form names. The API works in UTC.
 - Departure is limited to the next 7 days so the whole trip stays inside Open-Meteo's 16-day forecast. A checkpoint without forecast data is marked Unknown and left out of the average risk.
 - The place search covers the United States through `GEOCODE_COUNTRY_SET`.
-- The ranking follows the brief strictly. A route with 0.1 fewer Severe miles wins even when it is hours slower.
+- The ranking follows the brief strictly. A route with 0.1 fewer miles at Severe wins even when it is hours slower.
 - TomTom's free tier allows 2,500 routing and search requests a day and 50,000 map tile requests a day. A plan uses 1 to 3 requests, each place search uses 1 after a 350 millisecond pause in typing, and a map view loads 20 to 40 tiles. A tile TomTom cannot serve, for any reason, loads from OpenStreetMap, so the map stays complete when the tile quota runs out.
 - Open-Meteo's free tier is for non-commercial use and allows 10,000 location lookups a day and 600 a minute from one IP address. The Dallas to Denver trip used 94 lookups for the plan and 242 for the heatmap. A second uncached trip of that size inside the same minute exceeds the per-minute limit, and in testing on 31 October the third trip planned within one minute was refused. A refused plan returns a rate-limit message. A refused heatmap leaves the routes on screen and shows the message in the slider panel. Setting `OPEN_METEO_API_KEY` switches to the paid service and its higher limits.
 - The cache lives inside each server process and only saves time. Results do not depend on it.

@@ -36,7 +36,7 @@ describe('RouteSummaryCard', () => {
     expect(screen.getByText('798.5 mi')).toBeInTheDocument();
     expect(screen.getByText('12 h 27 min')).toBeInTheDocument();
     expect(screen.getByText('12.5 mi')).toBeInTheDocument();
-    expect(screen.getByText('Severe miles')).toBeInTheDocument();
+    expect(screen.getByText('Miles at Severe')).toBeInTheDocument();
     // Each information icon defines the level by its thresholds and states the unit.
     const severe = screen.getByRole('img', { name: /^A checkpoint is Severe when/ });
     expect(severe).toHaveAccessibleName(/wind of 35 to 44 mph with a load over 40,000 lb/);

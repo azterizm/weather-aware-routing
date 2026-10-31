@@ -44,12 +44,14 @@ def test_wind_thresholds(mph, expected):
         (0, L),
         (0.09, L),
         (0.10, M),
+        (0.14, M),  # Route C checkpoint 9, Phoenix to Albuquerque
         (0.24, M),
         (0.25, H),
         (0.49, H),
         (0.50, S),
         (1.00, S),
         (1.01, N),
+        (1.39, N),  # Route A checkpoint 3, Phoenix to Albuquerque
     ],
 )
 def test_rain_thresholds(in_hr, expected):
