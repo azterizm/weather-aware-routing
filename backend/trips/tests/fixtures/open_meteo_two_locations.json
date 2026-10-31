@@ -1,0 +1,119 @@
+[
+ {
+  "latitude": 32.75801,
+  "longitude": -96.80383,
+  "generationtime_ms": 0.13017654418945312,
+  "utc_offset_seconds": 0,
+  "timezone": "GMT",
+  "timezone_abbreviation": "GMT",
+  "elevation": 133.0,
+  "hourly_units": {
+   "time": "iso8601",
+   "wind_speed_10m": "mp/h",
+   "rain": "inch",
+   "showers": "inch",
+   "snowfall": "inch"
+  },
+  "hourly": {
+   "time": [
+    "2026-10-31T06:00",
+    "2026-10-31T07:00",
+    "2026-10-31T08:00",
+    "2026-10-31T09:00",
+    "2026-10-31T10:00",
+    "2026-10-31T11:00"
+   ],
+   "wind_speed_10m": [
+    3.6,
+    4.0,
+    4.5,
+    4.6,
+    4.1,
+    2.4
+   ],
+   "rain": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "showers": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "snowfall": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ]
+  }
+ },
+ {
+  "latitude": 39.746895,
+  "longitude": -104.987076,
+  "generationtime_ms": 0.06628036499023438,
+  "utc_offset_seconds": 0,
+  "timezone": "GMT",
+  "timezone_abbreviation": "GMT",
+  "elevation": 1589.0,
+  "location_id": 1,
+  "hourly_units": {
+   "time": "iso8601",
+   "wind_speed_10m": "mp/h",
+   "rain": "inch",
+   "showers": "inch",
+   "snowfall": "inch"
+  },
+  "hourly": {
+   "time": [
+    "2026-10-31T06:00",
+    "2026-10-31T07:00",
+    "2026-10-31T08:00",
+    "2026-10-31T09:00",
+    "2026-10-31T10:00",
+    "2026-10-31T11:00"
+   ],
+   "wind_speed_10m": [
+    1.7,
+    2.2,
+    2.4,
+    1.9,
+    1.8,
+    1.9
+   ],
+   "rain": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "showers": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "snowfall": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+   ]
+  }
+ }
+]

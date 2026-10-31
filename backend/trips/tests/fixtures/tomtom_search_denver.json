@@ -1,0 +1,63 @@
+{
+ "results": [
+  {
+   "type": "Geography",
+   "id": "Wyt3RbooEPauq1uzTmd9sA",
+   "entityType": "Municipality",
+   "address": {
+    "municipality": "Denver",
+    "countrySecondarySubdivision": "Denver",
+    "countrySubdivision": "CO",
+    "countrySubdivisionName": "Colorado",
+    "countrySubdivisionCode": "CO",
+    "countryCode": "US",
+    "country": "United States",
+    "countryCodeISO3": "USA",
+    "freeformAddress": "Denver, CO"
+   },
+   "position": {
+    "lat": 39.738453,
+    "lon": -104.984853
+   }
+  },
+  {
+   "type": "Geography",
+   "id": "0OPLTpE07MYw9GYDYJPmjA",
+   "entityType": "Municipality",
+   "address": {
+    "municipality": "Denver",
+    "countrySubdivision": "NC",
+    "countrySubdivisionName": "North Carolina",
+    "countrySubdivisionCode": "NC",
+    "countryCode": "US",
+    "country": "United States",
+    "countryCodeISO3": "USA",
+    "freeformAddress": "Denver, NC"
+   },
+   "position": {
+    "lat": 35.531952,
+    "lon": -81.030357
+   }
+  },
+  {
+   "type": "Geography",
+   "id": "S09ZAZT0iaQHQfM3ucv8sA",
+   "entityType": "Municipality",
+   "address": {
+    "municipality": "Denver",
+    "countrySecondarySubdivision": "Newaygo",
+    "countrySubdivision": "MI",
+    "countrySubdivisionName": "Michigan",
+    "countrySubdivisionCode": "MI",
+    "countryCode": "US",
+    "country": "United States",
+    "countryCodeISO3": "USA",
+    "freeformAddress": "Denver, MI"
+   },
+   "position": {
+    "lat": 43.597543,
+    "lon": -85.979732
+   }
+  }
+ ]
+}
