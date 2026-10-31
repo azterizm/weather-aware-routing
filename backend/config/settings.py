@@ -121,7 +121,9 @@ CORRIDOR_MAX_CELLS = int(env("CORRIDOR_MAX_CELLS", "250"))
 
 # --- Security ----------------------------------------------------------------------------
 SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_REFERRER_POLICY = "same-origin"
+# OpenStreetMap's tile usage policy requires a Referer on tile requests; this sends only
+# the site origin to other HTTPS sites (the browser default).
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 X_FRAME_OPTIONS = "DENY"
 
 if not DEBUG:
