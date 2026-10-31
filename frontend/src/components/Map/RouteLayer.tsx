@@ -21,16 +21,16 @@ function RouteTooltip({ route, recommended }: { route: RouteOption; recommended:
     <div>
       <strong>
         {route.label}
-        {recommended ? ' (recommended)' : ''}
+        {recommended ? ', recommended' : ''}
       </strong>
       <br />
-      {formatMiles(route.distance_miles)} · {formatDuration(route.duration_seconds)} · arrives{' '}
+      {formatMiles(route.distance_miles)}, {formatDuration(route.duration_seconds)}, arrives{' '}
       {formatDateTime(route.arrival_time)}
       <br />
-      No Travel {formatMiles(miles.NO_TRAVEL)} · Severe {formatMiles(miles.SEVERE)} · High{' '}
+      No Travel {formatMiles(miles.NO_TRAVEL)}, Severe {formatMiles(miles.SEVERE)}, High{' '}
       {formatMiles(miles.HIGH)}
       <br />
-      Average risk {average === null ? '—' : `${average.toFixed(2)} / 4`}
+      Average risk {average === null ? 'unknown' : `${average.toFixed(2)} of 4`}
     </div>
   );
 }

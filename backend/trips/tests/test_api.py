@@ -120,7 +120,7 @@ def test_plan_happy_path(client):
     # Severe everywhere, so the shortest route by distance (Route B, ~798 mi) has the fewest
     # Severe miles and wins on the first criterion.
     assert body["recommended_route_id"] == "route-2"
-    assert body["recommendation_reason"].startswith("Fewest Severe miles")
+    assert body["recommendation_reason"].startswith("Route B has the fewest Severe miles")
 
 
 @responses.activate
@@ -130,7 +130,7 @@ def test_plan_calm_weather_recommends_fastest(client):
     body = client.post("/api/trips/plan/", plan_body(), format="json").json()
     # All Low: average risk ties at 0, so the fastest route (Route A, 42,715 s) wins.
     assert body["recommended_route_id"] == "route-1"
-    assert body["recommendation_reason"].startswith("Shortest travel time")
+    assert body["recommendation_reason"].startswith("Route A has the shortest travel time")
 
 
 @responses.activate
@@ -243,4 +243,4 @@ def test_route_options_rejects_long_or_duplicate_detours(monkeypatch):
     monkeypatch.setattr(route_options.tomtom, "calculate_routes", fake_calculate)
     routes, warnings = route_options.get_route_options(origin, destination, None)
     assert len(routes) == 1
-    assert warnings == ["Only 1 distinct route option(s) could be found for this trip."]
+    assert warnings == ["Only 1 distinct route option was found for this trip."]

@@ -18,7 +18,8 @@ export function RiskLegend({ loadLbs }: { loadLbs: number | undefined }) {
       </Stack>
       {loadLbs !== undefined && (
         <Typography variant="caption" color="text.secondary">
-          Risk for a {formatPounds(loadLbs)} load (wind, rain, snow and load rules)
+          Colours show risk for a {formatPounds(loadLbs)} load under the wind, rain, snow and load
+          rules.
         </Typography>
       )}
     </Box>

@@ -32,7 +32,8 @@ def _check_status(response, data: Any) -> None:
     if response.status_code in (403, 429):
         logger.error("TomTom rejected the request with %s", response.status_code)
         raise UpstreamQuotaExceeded(
-            "The routing provider rejected the request (daily quota reached or invalid API key)."
+            "The routing provider rejected the request. The daily quota is used up "
+            "or the API key is invalid."
         )
     if response.status_code >= 500:
         raise UpstreamUnavailable("The routing provider is unavailable. Please try again.")

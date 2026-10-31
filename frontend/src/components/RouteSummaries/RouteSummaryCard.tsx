@@ -66,7 +66,11 @@ export const RouteSummaryCard = memo(function RouteSummaryCard({
             <Stat label="High" value={formatMiles(miles.HIGH)} />
             <Stat
               label="Average risk"
-              value={summary.average_risk === null ? '—' : `${summary.average_risk.toFixed(2)} / 4`}
+              value={
+                summary.average_risk === null
+                  ? 'Unknown'
+                  : `${summary.average_risk.toFixed(2)} of 4`
+              }
             />
             <Box>
               <Typography variant="caption" color="text.secondary" component="div">

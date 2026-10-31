@@ -87,7 +87,9 @@ def _fetch_batch(points: Sequence[LatLon], start: datetime, end: datetime) -> li
     response = http.get(PROVIDER, f"{settings.OPEN_METEO_BASE_URL}/v1/forecast", params, TIMEOUT)
     data = http.parse_json(PROVIDER, response)
     if response.status_code == 429:
-        raise UpstreamQuotaExceeded("The weather provider's rate limit was reached. Try later.")
+        raise UpstreamQuotaExceeded(
+            "The weather provider's rate limit was reached. Try again later."
+        )
     if response.status_code >= 500:
         raise UpstreamUnavailable("The weather provider is unavailable. Please try again.")
     if response.status_code != 200:

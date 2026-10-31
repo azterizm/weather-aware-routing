@@ -4,6 +4,7 @@ import pytest
 
 from trips.domain.recommendation import (
     RouteScore,
+    format_duration,
     rank_routes,
     recommendation_reason,
     summarize_route,
@@ -90,21 +91,39 @@ def score(route_id, no_travel=0.0, severe=0.0, high=0.0, avg=0.5, time_s=3600.0)
 
 
 @pytest.mark.parametrize(
-    ("better", "worse", "reason_start"),
+    ("better", "worse", "reason"),
     [
-        (score("A", no_travel=0, severe=50), score("B", no_travel=5), "Fewest No Travel miles"),
-        (score("A", severe=10, high=90), score("B", severe=20, high=0), "Fewest Severe miles"),
-        (score("A", high=10, avg=2.0), score("B", high=30, avg=0.1), "Fewest High miles"),
-        (score("A", avg=0.4, time_s=9000), score("B", avg=0.6, time_s=100), "Lowest average risk"),
-        (score("A", time_s=3600), score("B", time_s=4000), "Shortest travel time"),
+        (
+            score("A", no_travel=0, severe=50),
+            score("B", no_travel=5),
+            "Route A has the fewest No Travel miles, 0 mi against 5 mi on Route B.",
+        ),
+        (
+            score("A", severe=10, high=90),
+            score("B", severe=20, high=0),
+            "Route A has the fewest Severe miles, 10 mi against 20 mi on Route B.",
+        ),
+        (
+            score("A", high=10, avg=2.0),
+            score("B", high=30, avg=0.1),
+            "Route A has the fewest High miles, 10 mi against 30 mi on Route B.",
+        ),
+        (
+            score("A", avg=0.4, time_s=9000),
+            score("B", avg=0.6, time_s=100),
+            "Route A has the lowest average risk, 0.40 against 0.60 on Route B.",
+        ),
+        (
+            score("A", time_s=3600),
+            score("B", time_s=4000),
+            "Route A has the shortest travel time, 1 h 00 min against 1 h 07 min on Route B.",
+        ),
     ],
 )
-def test_ranking_criteria_in_order(better, worse, reason_start):
+def test_ranking_criteria_in_order(better, worse, reason):
     ranked = rank_routes([worse, better])
     assert [r.route_id for r in ranked] == ["A", "B"]
-    reason = recommendation_reason(ranked)
-    assert reason.startswith(reason_start)
-    assert reason.endswith("on Route B.")
+    assert recommendation_reason(ranked) == reason
 
 
 def test_float_noise_does_not_decide_ranking():
@@ -116,8 +135,15 @@ def test_float_noise_does_not_decide_ranking():
 def test_full_tie_keeps_provider_order():
     ranked = rank_routes([score("A"), score("B")])
     assert ranked[0].route_id == "A"
-    assert recommendation_reason(ranked).startswith("Tied with Route B")
+    assert recommendation_reason(ranked).startswith("Route A ties Route B on every criterion")
+
+
+@pytest.mark.parametrize(
+    ("seconds", "text"), [(14_550, "4 h 03 min"), (14_549, "4 h 02 min"), (1_500, "25 min")]
+)
+def test_format_duration_rounds_half_up_like_the_frontend(seconds, text):
+    assert format_duration(seconds) == text
 
 
 def test_single_route_reason():
-    assert recommendation_reason([score("A")]) == "Only one route option was available."
+    assert recommendation_reason([score("A")]) == "Only 1 route option was available."

@@ -20,7 +20,7 @@ export function RiskMilesBar({ milesByRisk }: Props) {
     <Box>
       <Box
         role="img"
-        aria-label={`Miles by risk level: ${description}`}
+        aria-label={`Miles by risk level. ${description}.`}
         sx={{ display: 'flex', gap: '2px', height: 12, borderRadius: '4px', overflow: 'hidden' }}
       >
         {parts.map((key) => {
@@ -29,7 +29,7 @@ export function RiskMilesBar({ milesByRisk }: Props) {
           return (
             <Tooltip
               key={key}
-              title={`${RISK_META[key].label}: ${formatMiles(miles)} (${share.toFixed(0)}%)`}
+              title={`${formatMiles(miles)} at ${RISK_META[key].label} risk, ${share.toFixed(0)}% of the route`}
             >
               <Box
                 sx={{ flexGrow: miles, flexBasis: 0, minWidth: 4, bgcolor: RISK_META[key].color }}

@@ -101,14 +101,15 @@ def plan_trip(origin: Place, destination: Place, departure: datetime, load_lbs: 
 
     unknown = sum(1 for p in planned for cp in p.checkpoints if cp.risk.level is None)
     if unknown:
+        noun = "checkpoint" if unknown == 1 else "checkpoints"
         warnings.append(
-            f"Weather was unavailable for {unknown} checkpoint(s); they are shown as Unknown "
-            "and excluded from average risk."
+            f"Weather was unavailable for {unknown} {noun}. They are shown as Unknown "
+            "and left out of the average risk."
         )
     no_travel_miles = best.summary.miles_by_risk[RiskLevel.NO_TRAVEL.name]
     if no_travel_miles > 0:
         warnings.append(
-            f"Even the recommended route has {no_travel_miles:g} mi of No Travel conditions."
+            f"The recommended route still has {no_travel_miles:g} mi of No Travel conditions."
         )
 
     logger.info(

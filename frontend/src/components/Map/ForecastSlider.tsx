@@ -10,7 +10,7 @@ interface Props {
   error: string | null;
 }
 
-const MARKS = [0, 12, 24, 36, 48].map((hour) => ({ value: hour, label: `+${hour} h` }));
+const MARKS = [0, 12, 24, 36, 48].map((hour) => ({ value: hour, label: `${hour} h` }));
 
 /** 0-48 hour slider for the corridor heatmap; hour 0 is the departure hour. */
 export function ForecastSlider({ hours, value, onChange, loading, error }: Props) {
@@ -22,7 +22,7 @@ export function ForecastSlider({ hours, value, onChange, loading, error }: Props
         {current && (
           <Typography component="span" variant="body2" color="text.secondary">
             {' '}
-            · {formatDateTime(current)} (+{value} h after departure)
+            at {formatDateTime(current)}, {value} h after departure
           </Typography>
         )}
       </Typography>
@@ -36,7 +36,7 @@ export function ForecastSlider({ hours, value, onChange, loading, error }: Props
       )}
       {error && !hours && (
         <Typography variant="body2" color="error" sx={{ py: 1 }}>
-          Corridor forecast unavailable: {error}
+          The corridor forecast is unavailable. {error}
         </Typography>
       )}
       {hours && (

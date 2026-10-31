@@ -16,7 +16,7 @@ export function RouteSummaries({ plan, selectedRouteId, onSelectRoute }: Props) 
     <Stack spacing={1.5} component="section" aria-label="Route options">
       {recommended && (
         <Alert severity="success" variant="outlined">
-          <AlertTitle>Recommended: {recommended.label}</AlertTitle>
+          <AlertTitle>{recommended.label} is recommended</AlertTitle>
           {plan.recommendation_reason}
         </Alert>
       )}
@@ -26,9 +26,10 @@ export function RouteSummaries({ plan, selectedRouteId, onSelectRoute }: Props) 
         </Alert>
       ))}
       <Typography variant="body2" color="text.secondary">
-        Weather sampled every {plan.checkpoint_interval_miles} mi at each checkpoint&apos;s ETA ·
-        Departs {formatDateTime(plan.departure_time)} · Load {formatPounds(plan.load_weight_lbs)}.
-        Ranked by fewest No Travel, Severe and High miles, then average risk, then travel time.
+        Weather is sampled every {plan.checkpoint_interval_miles} mi at each checkpoint&apos;s
+        arrival time. The trip departs {formatDateTime(plan.departure_time)} with a{' '}
+        {formatPounds(plan.load_weight_lbs)} load. Routes are ranked by fewest No Travel, Severe and
+        High miles, then average risk, then travel time.
       </Typography>
       {plan.routes.map((route) => (
         <RouteSummaryCard

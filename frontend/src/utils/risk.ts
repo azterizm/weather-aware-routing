@@ -22,25 +22,28 @@ export function riskFromScore(score: number): RiskOrUnknown {
 }
 
 export function riskLabel(level: RiskOrUnknown | null): string {
-  return level ? RISK_META[level].label : '—';
+  return level ? RISK_META[level].label : 'Unknown';
 }
 
 const LOAD_RULE_TEXT: Record<string, string> = {
-  wind_45_54_load_over_30000: 'wind 45–54 mph with load over 30,000 lb',
-  wind_35_44_load_over_40000: 'wind 35–44 mph with load over 40,000 lb',
+  wind_45_54_load_over_30000: 'wind of 45 to 54 mph with a load over 30,000 lb',
+  wind_35_44_load_over_40000: 'wind of 35 to 44 mph with a load over 40,000 lb',
 };
 
-/** Why a checkpoint has its level, e.g. "Wind (wind 35–44 mph with load over 40,000 lb)". */
+function joinWithAnd(items: string[]): string {
+  return items.length > 1 ? `${items.slice(0, -1).join(', ')} and ${items.at(-1)}` : items.join('');
+}
+
+/** One sentence on why a checkpoint has its level, such as "Severe risk, set by rain." */
 export function describeRiskCause(checkpoint: Checkpoint): string {
   const { factors, risk } = checkpoint;
-  if (!factors || risk === 'UNKNOWN') return 'Forecast unavailable';
-  if (risk === 'LOW') return 'All conditions below thresholds';
+  if (!factors || risk === 'UNKNOWN') return 'The forecast is unavailable for this hour.';
+  if (risk === 'LOW') return 'Low risk. Every condition is below its threshold.';
   const causes: string[] = [];
   if (factors.wind === risk) {
-    const rule = factors.load_rule ? LOAD_RULE_TEXT[factors.load_rule] : undefined;
-    causes.push(rule ? `Wind (${rule})` : 'Wind');
+    causes.push((factors.load_rule && LOAD_RULE_TEXT[factors.load_rule]) || 'wind');
   }
-  if (factors.rain === risk) causes.push('Rain');
-  if (factors.snow === risk) causes.push('Snow');
-  return causes.join(', ');
+  if (factors.rain === risk) causes.push('rain');
+  if (factors.snow === risk) causes.push('snow');
+  return `${RISK_META[risk].label} risk, set by ${joinWithAnd(causes)}.`;
 }

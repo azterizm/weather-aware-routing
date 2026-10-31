@@ -91,7 +91,7 @@ export function TripForm({ onSubmit, submitting, serverErrors = {} }: Props) {
           textField: {
             required: true,
             error: Boolean(shownErrors.departure_time),
-            helperText: shownErrors.departure_time ?? `Time zone: ${browserTimeZone}`,
+            helperText: shownErrors.departure_time ?? `Times are in ${browserTimeZone}.`,
           },
         }}
       />

@@ -39,10 +39,10 @@ export function PlaceAutocomplete({ label, value, onChange, error, disabled }: P
       loading={search.isFetching}
       noOptionsText={
         tooShort
-          ? `Type at least ${MIN_QUERY_LENGTH} characters`
+          ? `Type at least ${MIN_QUERY_LENGTH} characters.`
           : search.isError
-            ? 'Place search is unavailable'
-            : 'No places found'
+            ? 'Place search is unavailable.'
+            : 'No places match this search.'
       }
       disabled={disabled}
       autoComplete

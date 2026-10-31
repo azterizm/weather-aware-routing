@@ -74,7 +74,7 @@ export default function App() {
             )}
             {!request && (
               <Typography variant="body2" color="text.secondary">
-                Enter a trip to compare three truck routes by weather risk and travel time.
+                Enter a trip to compare 3 truck routes by weather risk and travel time.
               </Typography>
             )}
             {plan.data && selectedRouteId && !plan.isFetching && (

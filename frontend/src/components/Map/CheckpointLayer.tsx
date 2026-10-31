@@ -10,17 +10,17 @@ function CheckpointTooltip({ route, checkpoint }: { route: RouteOption; checkpoi
   return (
     <div>
       <strong>
-        {route.label} · mile {checkpoint.mile.toFixed(1)}
-      </strong>{' '}
-      (checkpoint {checkpoint.index + 1} of {route.checkpoints.length})
+        {route.label}, mile {checkpoint.mile.toFixed(1)}
+      </strong>
+      , checkpoint {checkpoint.index + 1} of {route.checkpoints.length}
       <br />
-      ETA {formatDateTime(checkpoint.eta)}
+      Arrives {formatDateTime(checkpoint.eta)}
       <br />
       {weather
-        ? `Wind ${formatWind(weather.wind_mph)} · Rain ${formatRate(weather.rain_in_hr)} · Snow ${formatRate(weather.snow_in_hr)}`
-        : 'Forecast unavailable'}
+        ? `Wind ${formatWind(weather.wind_mph)}, rain ${formatRate(weather.rain_in_hr)}, snow ${formatRate(weather.snow_in_hr)}`
+        : 'No forecast for this hour'}
       <br />
-      <strong>Risk: {RISK_META[checkpoint.risk].label}</strong> — {describeRiskCause(checkpoint)}
+      <strong>{describeRiskCause(checkpoint)}</strong>
     </div>
   );
 }

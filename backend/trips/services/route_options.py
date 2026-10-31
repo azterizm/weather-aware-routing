@@ -91,7 +91,9 @@ def get_route_options(
 
     warnings = []
     if len(routes) < TARGET_ROUTES:
+        found = len(routes)
         warnings.append(
-            f"Only {len(routes)} distinct route option(s) could be found for this trip."
+            f"Only {found} distinct route {'option was' if found == 1 else 'options were'} "
+            "found for this trip."
         )
     return routes, warnings

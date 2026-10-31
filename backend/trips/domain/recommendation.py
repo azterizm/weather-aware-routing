@@ -70,34 +70,41 @@ def rank_routes(scores: Sequence[RouteScore]) -> list[RouteScore]:
 
 
 def format_duration(seconds: float) -> str:
-    minutes = round(seconds / 60)
+    # Round half up, matching the frontend's Math.round, so both show the same minutes.
+    minutes = math.floor(seconds / 60 + 0.5)
     hours, minutes = divmod(minutes, 60)
     return f"{hours} h {minutes:02d} min" if hours else f"{minutes} min"
 
 
+CRITERIA = (
+    "the fewest No Travel miles",
+    "the fewest Severe miles",
+    "the fewest High miles",
+    "the lowest average risk",
+    "the shortest travel time",
+)
+
+
 def recommendation_reason(ranked: Sequence[RouteScore]) -> str:
-    """One sentence naming the first criterion on which the winner beats the runner-up."""
+    """One sentence naming the first criterion on which the winner beats the runner-up,
+    e.g. "Route B has the fewest Severe miles, 0 mi against 42 mi on Route A."."""
     if not ranked:
         return ""
     if len(ranked) == 1:
-        return "Only one route option was available."
+        return "Only 1 route option was available."
     best, other = ranked[0], ranked[1]
     best_key, other_key = ranking_key(best), ranking_key(other)
-    labels = (
-        "Fewest No Travel miles",
-        "Fewest Severe miles",
-        "Fewest High miles",
-        "Lowest average risk",
-        "Shortest travel time",
-    )
     for criterion, (mine, theirs) in enumerate(zip(best_key, other_key, strict=True)):
         if mine == theirs:
             continue
         if criterion < 3:
-            values = f"{mine:g} mi vs {theirs:g} mi"
+            values = f"{mine:g} mi against {theirs:g} mi"
         elif criterion == 3:
-            values = f"{mine:.2f} vs {theirs:.2f}"
+            values = f"{mine:.2f} against {theirs:.2f}"
         else:
-            values = f"{format_duration(mine)} vs {format_duration(theirs)}"
-        return f"{labels[criterion]}: {values} on {other.label}."
-    return f"Tied with {other.label} on every criterion; listed first by the routing provider."
+            values = f"{format_duration(mine)} against {format_duration(theirs)}"
+        return f"{best.label} has {CRITERIA[criterion]}, {values} on {other.label}."
+    return (
+        f"{best.label} ties {other.label} on every criterion and is listed first "
+        "by the routing provider."
+    )

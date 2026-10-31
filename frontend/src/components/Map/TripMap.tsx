@@ -112,7 +112,7 @@ export default function TripMap({
                 pathOptions={{ color: '#111827', weight: 3, fillColor: '#ffffff', fillOpacity: 1 }}
               >
                 <Tooltip>
-                  {kind === 'origin' ? 'Origin' : 'Destination'}: {endpoints[kind].label}
+                  {kind === 'origin' ? 'Origin' : 'Destination'} is {endpoints[kind].label}
                 </Tooltip>
               </CircleMarker>
             ))}

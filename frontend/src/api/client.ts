@@ -52,7 +52,7 @@ export function toApiError(error: unknown): unknown {
   }
   if (response) {
     return new ApiError(
-      `Unexpected server error (${response.status}).`,
+      `The server returned an unexpected error with status ${response.status}.`,
       'server_error',
       response.status,
     );

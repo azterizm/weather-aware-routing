@@ -22,7 +22,7 @@ MIN_TRIP_MILES = 0.5
 class AwareDateTimeField(serializers.DateTimeField):
     """ISO 8601 date-time that must carry a UTC offset; naive values are rejected."""
 
-    default_error_messages = {"naive": "Include a UTC offset, e.g. 2026-11-01T08:00:00-05:00."}
+    default_error_messages = {"naive": "Include a UTC offset, such as 2026-11-01T08:00:00-05:00."}
 
     def enforce_timezone(self, value):
         if timezone.is_naive(value):

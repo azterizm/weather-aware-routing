@@ -4,6 +4,8 @@ describe('format utils', () => {
   it('formats durations', () => {
     expect(formatDuration(42_715)).toBe('11 h 52 min');
     expect(formatDuration(1_500)).toBe('25 min');
+    // Same half-up rounding as the backend's recommendation text.
+    expect(formatDuration(14_550)).toBe('4 h 03 min');
   });
 
   it('never rounds a weather value up across a threshold', () => {

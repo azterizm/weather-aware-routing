@@ -28,9 +28,9 @@ describe('RouteSummaryCard', () => {
     expect(screen.getByText('798.5 mi')).toBeInTheDocument();
     expect(screen.getByText('12 h 27 min')).toBeInTheDocument();
     expect(screen.getByText('12.5 mi')).toBeInTheDocument();
-    expect(screen.getByText('0.27 / 4')).toBeInTheDocument();
+    expect(screen.getByText('0.27 of 4')).toBeInTheDocument();
     expect(
-      screen.getByRole('img', { name: /Miles by risk level: Low 700 mi, Moderate 56 mi/ }),
+      screen.getByRole('img', { name: /Miles by risk level\. Low 700 mi, Moderate 56 mi/ }),
     ).toBeInTheDocument();
     // Levels with no miles are left out of the bar legend.
     expect(screen.queryByText(/No Travel 0 mi/)).not.toBeInTheDocument();
