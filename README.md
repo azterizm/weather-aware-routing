@@ -45,11 +45,12 @@ Dockerfile               builds the single-page app, then the Python runtime wit
 heroku.yml               Heroku container build
 ```
 
-The browser makes three kinds of request.
+The browser makes four kinds of request.
 
 1. `GET /api/geocode/?q=` returns place suggestions from TomTom Search while the driver types.
 2. `POST /api/trips/plan/` requests truck routes from TomTom, places the checkpoints, fetches the forecast for every checkpoint in one batched Open-Meteo request, scores the risk and returns the ranked routes.
 3. `POST /api/trips/corridor-weather/` builds a grid around the returned routes and returns the risk for every cell for each hour from departure to 48 hours later.
+4. `GET /api/tiles/{z}/{x}/{y}.png` returns TomTom map tiles through the API, so the TomTom key never reaches the browser. When a tile request fails, the map loads that tile from OpenStreetMap instead.
 
 The heatmap request starts after the plan returns, so routes and checkpoints appear first. On the Dallas to Denver test trip the plan took 8.2 seconds and the heatmap followed 0.9 seconds later. The API stores nothing and has no database.
 
@@ -205,6 +206,10 @@ The response holds 49 hourly timestamps and one matrix per measure, indexed by h
 }
 ```
 
+### `GET /api/tiles/{z}/{x}/{y}.png`
+
+The endpoint returns a 256 pixel TomTom map tile as PNG for zoom levels 0 to 18, cached by the browser for 1 day. A tile outside the map returns 404. A TomTom failure returns 502 or 503, and the map then loads that tile from `tile.openstreetmap.org`. The page sends its origin as the Referer, which OpenStreetMap's tile usage policy requires.
+
 ## Running locally
 
 The backend needs [uv](https://docs.astral.sh/uv/), which installs Python 3.13 itself. The frontend needs Node 22 or newer, and `frontend/.nvmrc` pins Node 24. Routing and geocoding need a free API key from [TomTom](https://developer.tomtom.com/). Open-Meteo needs no key.
@@ -237,7 +242,7 @@ Every setting comes from an environment variable. Local development reads them f
 | `OPEN_METEO_API_KEY` | Not set | Switches to the paid Open-Meteo service. |
 | `GEOCODE_COUNTRY_SET` | `US` | Countries the place search covers. |
 | `CORRIDOR_MAX_CELLS` | `250` | Maximum heatmap cells, each one forecast location. |
-| `THROTTLE_PLAN`, `THROTTLE_CORRIDOR`, `THROTTLE_GEOCODE` | `20/min`, `20/min`, `60/min` | Request limits per IP address. |
+| `THROTTLE_PLAN`, `THROTTLE_CORRIDOR`, `THROTTLE_GEOCODE`, `THROTTLE_TILES` | `20/min`, `20/min`, `60/min`, `600/min` | Request limits per IP address. |
 | `WEB_CONCURRENCY` | `2` | Gunicorn worker processes, each with 4 threads. |
 
 ## Performance and stability
@@ -251,7 +256,7 @@ Every setting comes from an environment variable. Local development reads them f
 - The first page load downloads 229 KB of JavaScript with Brotli compression. The map code loads separately and adds 42 KB. Files with a content hash in their name are cached for a year, and `index.html` is never cached.
 - The map draws on canvas, and moving the slider only recolours the heatmap cells.
 - API keys never reach the logs. The TomTom key is removed from every logged message, and provider errors are raised again without their URLs.
-- Each IP address is limited to 20 plans, 20 heatmaps and 60 place searches per minute. The production container runs as a non-root user, with HSTS and strict security headers.
+- Each IP address is limited to 20 plans, 20 heatmaps, 60 place searches and 600 map tiles per minute. The production container runs as a non-root user, with HSTS and strict security headers.
 
 ## Deployment
 
@@ -285,6 +290,6 @@ GitHub Actions runs lint, type checks and tests for both halves on every push, t
 - Departure is limited to the next 7 days so the whole trip stays inside Open-Meteo's 16-day forecast. A checkpoint without forecast data is marked Unknown and left out of the average risk.
 - The place search covers the United States through `GEOCODE_COUNTRY_SET`.
 - The ranking follows the brief strictly. A route with 0.1 fewer Severe miles wins even when it is hours slower.
-- TomTom's free tier allows 2,500 requests a day. A plan uses 1 to 3, and each place search uses 1 after a 350 millisecond pause in typing.
+- TomTom's free tier allows 2,500 routing and search requests a day and 50,000 map tile requests a day. A plan uses 1 to 3 requests, each place search uses 1 after a 350 millisecond pause in typing, and a map view loads 20 to 40 tiles. A tile TomTom cannot serve, for any reason, loads from OpenStreetMap, so the map stays complete when the tile quota runs out.
 - Open-Meteo's free tier is for non-commercial use and allows 10,000 location lookups a day and 600 a minute from one IP address. The Dallas to Denver trip used 94 lookups for the plan and 242 for the heatmap. A second uncached trip of that size inside the same minute exceeds the per-minute limit, and in testing on 31 October the third trip planned within one minute was refused. A refused plan returns a rate-limit message. A refused heatmap leaves the routes on screen and shows the message in the slider panel. Setting `OPEN_METEO_API_KEY` switches to the paid service and its higher limits.
 - The cache lives inside each server process and only saves time. Results do not depend on it.

@@ -244,3 +244,45 @@ def test_route_options_rejects_long_or_duplicate_detours(monkeypatch):
     routes, warnings = route_options.get_route_options(origin, destination, None)
     assert len(routes) == 1
     assert warnings == ["Only 1 distinct route option was found for this trip."]
+
+
+# --- Map tile proxy --------------------------------------------------------------------------
+
+TILE_URL = re.compile(re.escape("https://api.tomtom.com/map/1/tile/basic/main/") + ".*")
+PNG = b"\x89PNG\r\n\x1a\n" + b"0" * 64
+
+
+@responses.activate
+def test_tile_proxy_returns_png_and_hides_the_key(client):
+    responses.get(TILE_URL, body=PNG, content_type="image/png")
+    response = client.get("/api/tiles/5/7/12.png", HTTP_ACCEPT="image/avif,image/webp,image/*")
+    assert response.status_code == 200
+    assert response["Content-Type"] == "image/png"
+    assert response["Cache-Control"] == "public, max-age=86400"
+    assert response.content == PNG
+    assert "key=test-tomtom-key" in responses.calls[0].request.url
+    assert b"test-tomtom-key" not in response.content
+
+
+@pytest.mark.parametrize(
+    "path", ["/api/tiles/19/0/0.png", "/api/tiles/2/4/0.png", "/api/tiles/2/0/4.png"]
+)
+def test_tile_proxy_rejects_out_of_range_tiles(client, path):
+    assert client.get(path, HTTP_ACCEPT="image/*").status_code == 404
+
+
+@pytest.mark.parametrize(
+    ("status", "body", "content_type", "expected"),
+    [
+        (500, b"", "text/plain", 503),
+        (403, b"", "text/plain", 503),
+        (400, b"<error/>", "text/xml", 502),
+        (200, b"<html>", "text/html", 503),
+    ],
+)
+@responses.activate
+def test_tile_proxy_failures_return_error_status(client, status, body, content_type, expected):
+    # An error status is what makes the map switch that tile to OpenStreetMap.
+    responses.get(TILE_URL, body=body, status=status, content_type=content_type)
+    response = client.get("/api/tiles/5/7/12.png", HTTP_ACCEPT="image/*")
+    assert response.status_code == expected

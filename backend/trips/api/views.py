@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from django.http import HttpResponse
+from rest_framework.exceptions import NotFound
+from rest_framework.negotiation import BaseContentNegotiation
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -64,3 +67,35 @@ class CorridorWeatherView(APIView):
             data["routes"], data["start_time"], data["load_weight_lbs"]
         )
         return Response(corridor_json(forecast))
+
+
+class FirstRendererNegotiation(BaseContentNegotiation):
+    """Tiles are images; error bodies still use the first (JSON) renderer whatever the
+    browser's image Accept header says."""
+
+    def select_parser(self, request, parsers):
+        return parsers[0]
+
+    def select_renderer(self, request, renderers, format_suffix=None):
+        return renderers[0], renderers[0].media_type
+
+
+class MapTileView(APIView):
+    """GET /api/tiles/{z}/{x}/{y}.png — TomTom map tiles proxied so the API key stays private.
+
+    Any failure returns an error status, which makes the map load that tile from
+    OpenStreetMap instead.
+    """
+
+    throttle_scope = "tiles"
+    content_negotiation_class = FirstRendererNegotiation
+
+    def get(self, request, zoom: int, x: int, y: int):
+        limit = 2**zoom
+        if zoom > tomtom.MAX_TILE_ZOOM or x >= limit or y >= limit:
+            raise NotFound("No map tile exists at these coordinates.")
+        response = HttpResponse(tomtom.fetch_tile(zoom, x, y), content_type="image/png")
+        response["Cache-Control"] = "public, max-age=86400"
+        # PNG is already compressed; this keeps GZipMiddleware from spending CPU on it.
+        response["Content-Encoding"] = "identity"
+        return response

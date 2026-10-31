@@ -1,4 +1,4 @@
-import { Alert, AppBar, Box, Skeleton, Stack, Toolbar, Typography } from '@mui/material';
+import { Alert, Box, Skeleton, Stack, Typography } from '@mui/material';
 import { lazy, Suspense, useCallback, useState } from 'react';
 
 import { ApiError, errorMessage } from './api/client';
@@ -33,13 +33,6 @@ export default function App() {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100dvh' }}>
-      <AppBar position="static" elevation={0}>
-        <Toolbar variant="dense">
-          <Typography variant="h1" component="h1">
-            Weather-Aware Truck Routing
-          </Typography>
-        </Toolbar>
-      </AppBar>
       <Box
         sx={{
           flex: 1,
@@ -61,6 +54,9 @@ export default function App() {
           }}
         >
           <Stack spacing={2}>
+            <Typography variant="h1" component="h1">
+              Enter a trip
+            </Typography>
             <TripForm
               onSubmit={setRequest}
               submitting={plan.isFetching}
@@ -70,11 +66,6 @@ export default function App() {
             {plan.isFetching && (
               <Typography variant="body2" color="text.secondary" role="status">
                 Finding routes and sampling the weather along each one…
-              </Typography>
-            )}
-            {!request && (
-              <Typography variant="body2" color="text.secondary">
-                Enter a trip to compare 3 truck routes by weather risk and travel time.
               </Typography>
             )}
             {plan.data && selectedRouteId && !plan.isFetching && (

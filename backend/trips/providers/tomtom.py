@@ -155,3 +155,23 @@ def calculate_routes(
     if not routes:
         raise NoRouteFound("No truck route could be found between these locations.")
     return routes
+
+
+# --- Map tiles ---------------------------------------------------------------------------
+
+TILE_TIMEOUT = (3.05, 5.0)
+MAX_TILE_ZOOM = 18
+
+
+def fetch_tile(zoom: int, x: int, y: int) -> bytes:
+    """A 256 px PNG map tile. The API key stays on the server."""
+    url = f"{settings.TOMTOM_BASE_URL}/map/1/tile/basic/main/{zoom}/{x}/{y}.png"
+    response = http.get(
+        PROVIDER, url, [("key", settings.TOMTOM_API_KEY), ("tileSize", "256")], TILE_TIMEOUT
+    )
+    if response.status_code != 200 or not response.headers.get("Content-Type", "").startswith(
+        "image/"
+    ):
+        _check_status(response, None)
+        raise UpstreamUnavailable("The map tile provider returned an invalid response.")
+    return response.content

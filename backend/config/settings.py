@@ -101,6 +101,8 @@ REST_FRAMEWORK = {
         "geocode": env("THROTTLE_GEOCODE", "60/min"),
         "plan": env("THROTTLE_PLAN", "20/min"),
         "corridor": env("THROTTLE_CORRIDOR", "20/min"),
+        # A map view loads 20 to 40 tiles; panning and zooming load more.
+        "tiles": env("THROTTLE_TILES", "600/min"),
     },
     "NUM_PROXIES": 1 if not DEBUG else None,
 }

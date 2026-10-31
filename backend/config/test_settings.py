@@ -14,5 +14,5 @@ OPEN_METEO_BASE_URL = "https://api.open-meteo.com"
 SECURE_SSL_REDIRECT = False
 REST_FRAMEWORK = {
     **REST_FRAMEWORK,
-    "DEFAULT_THROTTLE_RATES": {"geocode": "1000/min", "plan": "1000/min", "corridor": "1000/min"},
+    "DEFAULT_THROTTLE_RATES": dict.fromkeys(["geocode", "plan", "corridor", "tiles"], "1000/min"),
 }

@@ -19,8 +19,10 @@ import { HeatmapLayer } from './HeatmapLayer';
 import { CHECKPOINT_PANE, CHECKPOINT_PANE_Z, HEATMAP_PANE, HEATMAP_PANE_Z } from './panes';
 import { RiskLegend } from './RiskLegend';
 import { RouteLayer } from './RouteLayer';
+import { handleTileError, MAX_TILE_ZOOM, PRIMARY_TILE_URL, TILE_ATTRIBUTION } from './tiles';
 
 const US_CENTER: [number, number] = [39.5, -98.35];
+const TILE_EVENTS = { tileerror: handleTileError };
 
 interface Props {
   plan: TripPlan | undefined;
@@ -64,9 +66,10 @@ export default function TripMap({
         style={{ height: '100%', width: '100%' }}
       >
         <TileLayer
-          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          maxZoom={18}
+          url={PRIMARY_TILE_URL}
+          attribution={TILE_ATTRIBUTION}
+          maxZoom={MAX_TILE_ZOOM}
+          eventHandlers={TILE_EVENTS}
         />
         {/* Panes keep the heatmap under routes and checkpoints above them, whatever loads first. */}
         {corridor.data && (
